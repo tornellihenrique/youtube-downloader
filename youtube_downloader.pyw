@@ -9,6 +9,7 @@ from tkinter import ttk
 from ttkthemes import ThemedTk
 import pyperclip
 import subprocess
+import tempfile
 
 # Configure logging
 logging.basicConfig(
@@ -38,27 +39,45 @@ def download_video_or_audio(url, folder_path, mode, log_callback, complete_callb
 
             if not video_stream or not audio_stream:
                 raise ValueError("Could not find suitable video or audio streams!")
+            
+            temp_dir = tempfile.gettempdir()  # Get the system temporary directory
 
             log_callback("Downloading video stream...")
-            video_path = video_stream.download(folder_path, filename="temp_video.mp4")
+            video_path = video_stream.download(temp_dir, filename="temp_video.mp4")
             log_callback(f"Video downloaded to: {video_path}")
 
             log_callback("Downloading audio stream...")
-            audio_path = audio_stream.download(folder_path, filename="temp_audio.mp4")
+            audio_path = audio_stream.download(temp_dir, filename="temp_audio.mp4")
             log_callback(f"Audio downloaded to: {audio_path}")
 
             output_path = os.path.join(folder_path, title + ".mp4")
             log_callback("Combining video and audio using ffmpeg...")
+            
             command = [
                 "ffmpeg",
-                "-y",
+                "-y",  # Overwrite output if exists
                 "-i", video_path,
                 "-i", audio_path,
                 "-c:v", "copy",
                 "-c:a", "aac",
                 output_path,
             ]
-            subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            log_callback("Starting ffmpeg processing...")
+            process = subprocess.Popen(
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                universal_newlines=True,
+                creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0  # Hide CMD on Windows
+            )
+
+            # Read ffmpeg output line by line and log it
+            for line in process.stdout:
+                log_callback(line.strip())
+
+            # Wait for process to finish
+            process.wait()
             log_callback(f"Video saved to: {output_path}")
 
             os.remove(video_path)
