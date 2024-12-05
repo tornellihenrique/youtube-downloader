@@ -22,7 +22,7 @@ def sanitize_filename(filename):
     return re.sub(r'[<>:"/\\|?*]', "_", filename)
 
 # Function to download video or audio
-def download_video_or_audio(url, folder_path, mode, log_callback, complete_callback):
+def download_video_or_audio(url, folder_path, mode, quality, log_callback, complete_callback):
     try:
         log_callback("Starting download...")
         
@@ -34,7 +34,43 @@ def download_video_or_audio(url, folder_path, mode, log_callback, complete_callb
         log_callback(f"Video title: {title}")
 
         if mode == "video":
-            video_stream = yt.streams.filter(file_extension="mp4", only_video=True).order_by('resolution').desc().first()
+            selected_quality = quality  # 'Max', '1080p', '720p', or '480p'
+
+            if selected_quality == "Max":
+                # Get the highest resolution video stream
+                video_stream = yt.streams.filter(
+                    file_extension="mp4", only_video=True
+                ).order_by('resolution').desc().first()
+            else:
+                # Attempt to get the stream with the selected resolution
+                video_stream = yt.streams.filter(
+                    file_extension="mp4", only_video=True, res=selected_quality
+                ).first()
+                if not video_stream:
+                    # If the desired resolution is not available, fallback to the next lower resolution
+                    available_resolutions = [stream.resolution for stream in yt.streams.filter(
+                        file_extension="mp4", only_video=True
+                    ).order_by('resolution').desc()]
+                    fallback_stream = None
+                    for res in ["1080p", "720p", "480p"]:
+                        if res in available_resolutions:
+                            fallback_stream = yt.streams.filter(
+                                file_extension="mp4", only_video=True, res=res
+                            ).first()
+                            break
+                    if fallback_stream:
+                        log_callback(f"Desired resolution {selected_quality} not available. Using {fallback_stream.resolution} instead.")
+                        video_stream = fallback_stream
+                    else:
+                        # If no acceptable resolution is found, use the highest available
+                        log_callback("Desired resolutions not available. Using highest available resolution.")
+                        video_stream = yt.streams.filter(
+                            file_extension="mp4", only_video=True
+                        ).order_by('resolution').desc().first()
+
+            # Old way:
+            # video_stream = yt.streams.filter(file_extension="mp4", only_video=True).order_by('resolution').desc().first()
+            
             audio_stream = yt.streams.filter(only_audio=True).order_by('abr').desc().first()
 
             if not video_stream or not audio_stream:
@@ -115,7 +151,7 @@ def create_downloader_gui(default_folder):
 
         download_button.config(state="disabled")
         cancel_button.config(state="disabled")
-        threading.Thread(target=download_video_or_audio, args=(url, folder_path, mode, log_message, download_complete)).start()
+        threading.Thread(target=download_video_or_audio, args=(url, folder_path, mode, quality_var.get(), log_message, download_complete)).start()
 
     def log_message(message):
         log_output.insert("end", message + "\n")
@@ -127,6 +163,12 @@ def create_downloader_gui(default_folder):
 
     def cancel_download():
         root.destroy()
+
+    def update_quality_options():
+        if mode_var.get() == "video":
+            quality_combobox.configure(state="readonly")
+        else:
+            quality_combobox.configure(state="disabled")
 
     # Detect clipboard URL
     clipboard_url = pyperclip.paste()
@@ -150,6 +192,15 @@ def create_downloader_gui(default_folder):
     mode_var = StringVar(value="video")
     ttk.Radiobutton(root, text="Video", variable=mode_var, value="video").pack(anchor="w", padx=20)
     ttk.Radiobutton(root, text="Audio", variable=mode_var, value="audio").pack(anchor="w", padx=20)
+
+    ttk.Label(root, text="Video Quality:").pack(anchor="w", padx=10, pady=5)
+    quality_var = StringVar(value="Max")
+    quality_combobox = ttk.Combobox(root, textvariable=quality_var, values=["Max", "1080p", "720p", "480p"], state="readonly")
+    quality_combobox.pack(anchor="w", padx=20)
+    quality_combobox.current(0)  # Set default to 'Max'
+
+    mode_var.trace_add("write", lambda *args: update_quality_options())
+    update_quality_options()
 
     ttk.Label(root, text="Logs:").pack(anchor="w", padx=10, pady=5)
     log_output = scrolledtext.ScrolledText(root, height=10, width=80, state="normal")
