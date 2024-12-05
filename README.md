@@ -8,7 +8,7 @@ Download YouTube videos directly from the context menu:
 
 ![Context Menu](images/context_menu.png)
 
-Simple and direct window for downloading and following logs:
+Simple and direct window for downloading and following logs (URL is automatically grabbed from clipboard):
 
 <img src="images/window_startup.png" width="60%">
 
