@@ -4,6 +4,14 @@
 
 A handy Python application that allows you to download YouTube videos or audios directly from your Windows context menu. Simply right-click inside any folder and choose to download from YouTube.
 
+Download YouTube videos directly from the context menu:
+
+![Context Menu](images/context_menu.png)
+
+Simple and direct window for downloading and following logs:
+
+<img src="images/window_startup.png" width="60%">
+
 ## **Features**
 
 - **Easy Download**: Download YouTube videos or audios with a simple right-click.
