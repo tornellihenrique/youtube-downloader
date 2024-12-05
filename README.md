@@ -7,19 +7,14 @@ A handy Python application that allows you to download YouTube videos or audios 
 ## **Features**
 
 - **Easy Download**: Download YouTube videos or audios with a simple right-click.
-
 - **GUI Interface**: User-friendly GUI for inputting URLs and monitoring download progress.
-
 - **High-Quality Downloads**: Downloads the highest available quality using `pytube` and `ffmpeg`.
-
 - **Context Menu Integration**: Seamlessly integrated into Windows Explorer for quick access.
 
 ## **Prerequisites**
 
 - **Python 3.6 or higher**: Ensure Python is installed and added to your system `PATH`.
-
 - **`pip` Package Manager**: Comes with Python installations.
-
 - **`ffmpeg`**: Download and install from [ffmpeg.org](https://ffmpeg.org/), and add it to your system `PATH`.
 
 ## **Installation**
@@ -27,7 +22,7 @@ A handy Python application that allows you to download YouTube videos or audios 
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/yourusername/youtube-downloader.git
+   git clone https://github.com/tornellihenrique/youtube-downloader.git
    ```
 
 2. **Navigate to the Project Directory:**
@@ -74,11 +69,13 @@ A handy Python application that allows you to download YouTube videos or audios 
 
 ```
 youtube-downloader/
+│
 ├── youtube_downloader.pyw    # Main application script
 ├── youtube_icon.ico          # Icon for context menu
 ├── setup_registry.bat        # Batch script to set up registry entries
 ├── requirements.txt          # Python dependencies
 ├── README.md                 # Project documentation
+└── LICENSE                   # License file
 ```
 
 ## **Contributing**
