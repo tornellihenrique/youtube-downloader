@@ -10,6 +10,7 @@ from ttkthemes import ThemedTk
 import pyperclip
 import subprocess
 import tempfile
+import uuid
 
 # Configure logging
 logging.basicConfig(
@@ -76,14 +77,15 @@ def download_video_or_audio(url, folder_path, mode, quality, log_callback, compl
             if not video_stream or not audio_stream:
                 raise ValueError("Could not find suitable video or audio streams!")
             
-            temp_dir = tempfile.gettempdir()  # Get the system temporary directory
+            temp_dir = tempfile.gettempdir()    # Get the system temporary directory
+            unique_id = uuid.uuid4().hex        # Generate random uuid for temp file name
 
             log_callback("Downloading video stream...")
-            video_path = video_stream.download(temp_dir, filename="temp_video.mp4")
+            video_path = video_stream.download(temp_dir, filename=f"temp_video_{unique_id}.mp4")
             log_callback(f"Video downloaded to: {video_path}")
 
             log_callback("Downloading audio stream...")
-            audio_path = audio_stream.download(temp_dir, filename="temp_audio.mp4")
+            audio_path = audio_stream.download(temp_dir, filename=f"temp_audio_{unique_id}.mp4")
             log_callback(f"Audio downloaded to: {audio_path}")
 
             output_path = os.path.join(folder_path, title + ".mp4")
