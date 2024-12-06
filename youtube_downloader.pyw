@@ -150,7 +150,7 @@ def create_downloader_gui(default_folder):
             return
 
         download_button.config(state="disabled")
-        cancel_button.config(state="disabled")
+        close_button.config(state="disabled")
         threading.Thread(target=download_video_or_audio, args=(url, folder_path, mode, quality_var.get(), log_message, download_complete)).start()
 
     def log_message(message):
@@ -158,8 +158,8 @@ def create_downloader_gui(default_folder):
         log_output.yview("end")
 
     def download_complete(success):
-        finish_button.config(state="normal")
-        cancel_button.config(state="normal")
+        download_button.config(state="normal")
+        close_button.config(state="normal")
 
     def cancel_download():
         root.destroy()
@@ -209,14 +209,11 @@ def create_downloader_gui(default_folder):
     button_frame = ttk.Frame(root)
     button_frame.pack(pady=10)
 
-    download_button = ttk.Button(button_frame, text="Start Download", command=start_download)
+    download_button = ttk.Button(button_frame, text="Download", command=start_download)
     download_button.grid(row=0, column=0, padx=5)
 
-    finish_button = ttk.Button(button_frame, text="Finish", state="disabled", command=root.destroy)
-    finish_button.grid(row=0, column=1, padx=5)
-
-    cancel_button = ttk.Button(button_frame, text="Cancel", command=cancel_download)
-    cancel_button.grid(row=0, column=2, padx=5)
+    close_button = ttk.Button(button_frame, text="Close", command=root.destroy)
+    close_button.grid(row=0, column=1, padx=5)
 
     root.mainloop()
 
