@@ -81,6 +81,7 @@ youtube-downloader/
 ├── youtube_downloader.pyw    # Main application script
 ├── youtube_icon.ico          # Icon for context menu
 ├── setup_registry.bat        # Batch script to set up registry entries
+├── remove_registry.bat       # Batch script to remove registry entries
 ├── requirements.txt          # Python dependencies
 ├── README.md                 # Project documentation
 └── LICENSE                   # License file
