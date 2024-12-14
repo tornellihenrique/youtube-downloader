@@ -154,6 +154,7 @@ def download_video_or_audio(url, folder_path, mode, quality, log_callback, compl
                 raise ValueError("Could not find suitable audio stream!")
 
             total_size = audio_stream.filesize or 0
+            downloaded_offset = 0
 
             log_callback("Downloading audio stream...")
             audio_path = audio_stream.download(folder_path, filename=title + ".mp3")
