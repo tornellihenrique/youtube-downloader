@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 from pytubefix import YouTube
 import logging
@@ -226,7 +227,7 @@ if __name__ == "__main__":
         default_url = clipboard_url if clipboard_url.startswith("http") and "youtube.com" in clipboard_url else ""
 
         root = ThemedTk(theme="arc")
-        root.title("YouTube Downloader")
+        root.title(f"YouTube Downloader - {sys.executable}")
 
         ttk.Label(root, text="YouTube URL:").pack(anchor="w", padx=10, pady=5)
         url_entry = ttk.Entry(root, width=80)
